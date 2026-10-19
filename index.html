@@ -1,173 +1,35 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Cooler Warehouse — Game Mode</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101820;color:white;font-family:system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;touch-action:none}canvas{display:block}#app{position:fixed;inset:0}#top{position:fixed;top:env(safe-area-inset-top,10px);left:10px;right:10px;display:flex;gap:8px;justify-content:space-between;align-items:start;pointer-events:none}#brand,#help{background:#102439da;border:1px solid #5ebcfc8a;border-radius:13px;padding:10px 13px;box-shadow:0 5px 25px #0008;pointer-events:auto}#brand strong{font-size:16px}#brand small{display:block;color:#c8dceb;font-size:11px;margin-top:3px}button{background:#153650dc;border:1px solid #75c9ff80;border-radius:11px;color:white;font:inherit;cursor:pointer}#help{padding:10px}#bottom{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none}#pad{display:grid;grid-template-columns:repeat(3,49px);grid-template-rows:repeat(3,49px);gap:4px;pointer-events:auto;direction:ltr}#pad button{font-size:24px;touch-action:none}#pad .empty{visibility:hidden}#tools{display:flex;flex-wrap:wrap;justify-content:end;gap:7px;max-width:55%;pointer-events:auto}#tools button{padding:10px;font-size:12px}#hint{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 174px);left:50%;transform:translateX(-50%);white-space:nowrap;background:#0d1c2acb;padding:7px 13px;border-radius:16px;font-size:12px;color:#e3f5ff;pointer-events:none}#map{position:fixed;top:86px;left:12px;width:156px;height:103px;background:#0d263edc;border:1px solid #66c2f7a6;border-radius:9px;pointer-events:none}#panel{position:fixed;top:20%;right:12px;width:min(325px,calc(100vw - 24px));max-height:65vh;overflow:auto;background:#102336f5;border:1px solid #79c8f3;border-radius:14px;padding:15px;box-shadow:0 15px 45px #0009;display:none;touch-action:pan-y}#panel.show{display:block}#close{float:left;padding:3px 8px}#panel h3{margin:5px 0 10px}#panel p{color:#deecf5;line-height:1.6}#panel input{width:100%;border:1px solid #729ab7;border-radius:8px;background:#061928;color:white;padding:10px;font-size:16px}#results{margin-top:10px;max-height:40vh;overflow:auto}#results>div{padding:9px;border-bottom:1px solid #50708a}#results small{display:block;color:#a9d7ef}#status{position:fixed;top:calc(env(safe-area-inset-top,10px) + 60px);right:12px;background:#12283bd9;padding:5px 9px;border-radius:8px;font-size:12px;pointer-events:none}#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#142333;color:#ddd;font-size:18px;z-index:5}a{color:#77cbff} @media(max-width:480px){#brand strong{font-size:14px}#tools{max-width:58%}#tools button{font-size:11px;padding:8px}#hint{font-size:10px;bottom:175px}#map{width:132px;height:87px;top:83px}#pad{grid-template-columns:repeat(3,43px);grid-template-rows:repeat(3,43px)}#status{top:76px;font-size:10px}}
-#crosshair{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;color:#ffffffa3;font-size:22px;text-shadow:0 1px 6px #000}#gameTag{position:fixed;top:calc(env(safe-area-inset-top,10px) + 114px);right:12px;font-size:10px;color:#e8f3fc;background:#122f3bc4;border-radius:8px;padding:6px 8px;pointer-events:none}#photos{position:fixed;inset:9% 7%;z-index:7;background:#102333f5;border:1px solid #72caff;border-radius:16px;display:none;overflow:auto;padding:14px;touch-action:pan-y}#photos.show{display:block}#photos img{width:100%;max-height:50vh;object-fit:contain;border-radius:8px;background:#111}#photos .photoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#photos figure{margin:0}#photos figcaption{font-size:12px;color:#c8ddec;margin:6px 0 12px}#photosClose{float:left;padding:8px 14px}#editSlot{margin-top:9px;width:100%;padding:10px;border-radius:8px;background:#061928;border:1px solid #73b7dc;color:white;font-size:16px}#panel button{background:#126ba1;border:1px solid #7cc8f3;color:white;border-radius:8px;padding:10px;margin:6px 4px;font-weight:700}#results>div{cursor:pointer}#brand small{color:#b5d8ee}</style></head><body><div id="app"></div><div id="loading">جاري بناء المستودع ثلاثي الأبعاد…</div><div id="top"><div id="brand"><strong>❄️ مستودع قطع غيار التبريد</strong><small>270 رقم قطعة • توزيع مقترح • 7 × 4 م</small></div><button id="help">؟</button></div><div id="status">انظر: الجدار الأمامي</div><canvas id="map" width="312" height="206"></canvas><div id="hint">👆 اسحب الشاشة للالتفات • الأسهم للمشي • اضغط على أي قطعة</div><div id="bottom"><div id="tools"><button id="searchBtn">⌕ بحث قطعة</button><button id="entranceBtn">⌂ المدخل</button><button id="leftBtn">A–B</button><button id="frontBtn">C–F</button><button id="rightBtn">G–H</button><button id="photosBtn">📷 الصور</button><button id="exportBtn">⇩ المواقع</button></div><div id="pad"><span class="empty"></span><button data-move="forward">▲</button><span class="empty"></span><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><div id="crosshair">＋</div><div id="gameTag">GAME MODE • ترتيب مقترح قابل للتعديل</div><div id="photos"><button id="photosClose">إغلاق ×</button><h3>صور المستودع الأصلية — مرجع لتجهيز الرفوف</h3><p>هذه صوركم الحقيقية قبل إعادة الترتيب. المجسم تخطيطي قابل للتعديل، وليس مسحًا ثلاثي الأبعاد.</p><div class="photoGrid"><figure><img src="photos/reference_1.jpg"><figcaption>رفوف وصناديق وكرتون</figcaption></figure><figure><img src="photos/reference_2.jpg"><figcaption>الصناديق الزرقاء والضواغط</figcaption></figure><figure><img src="photos/reference_3.jpg"><figcaption>الأجزاء الطويلة والواجهات</figcaption></figure><figure><img src="photos/reference_4.jpg"><figcaption>صورة أخرى للرفوف</figcaption></figure></div></div><div id="panel"><button id="close">×</button><h3 id="panelTitle">التفاصيل</h3><div id="panelText"></div><div id="results"></div></div>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
-const app=document.getElementById('app'),loading=document.getElementById('loading');let W=7,D=4; // x -3.5…3.5, z -2…2, entrance at z=+2
-const scene=new THREE.Scene();scene.background=new THREE.Color(0xb8b6ad);scene.fog=new THREE.Fog(0xb8b6ad,15,32);
-const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.035,50);camera.position.set(0,1.62,1.64);let yaw=0,pitch=0; const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;app.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe5f5ff,0x776d5e,1.35));const sun=new THREE.DirectionalLight(0xfff1d9,1.7);sun.position.set(1,4,0);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-6;sun.shadow.camera.right=6;sun.shadow.camera.top=6;sun.shadow.camera.bottom=-6;sun.shadow.bias=-0.001;scene.add(sun);
-const mat=(c,rough=.74,metal=0)=>new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:metal}); const gray=mat(0x343a3c,.29,.82),steel=mat(0x4c5358,.29,.80),wall=mat(0xd9d8d2),floor=mat(0x999994,.96),brown=mat(0xba905e,.94),blue=mat(0x075da6,.38,.08),dark=mat(0x20262a,.42,.4),white=mat(0xf6f7ef),black=mat(0x111b23),glass=mat(0xa9b5bd,.28,.45);
-
-// Game-style industrial warehouse materials inspired by the supplied photographs.
-function proceduralTexture(kind){
- const c=document.createElement('canvas');c.width=512;c.height=512;const g=c.getContext('2d');
- let seed=kind==='floor'?1357:kind==='wall'?986:284;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
- if(kind==='floor'){
-  g.fillStyle='#a9a59b';g.fillRect(0,0,512,512);
-  for(let i=0;i<11500;i++){const v=Math.floor(100+rand()*100);g.fillStyle=`rgba(${v},${v-5},${v-13},${.06+rand()*.18})`;g.fillRect(rand()*512,rand()*512,1+rand()*4,1+rand()*4)}
-  for(let i=0;i<150;i++){g.strokeStyle=`rgba(70,68,63,${rand()*.2})`;g.beginPath();g.moveTo(rand()*512,rand()*512);g.lineTo(rand()*512,rand()*512);g.stroke()}
- }else if(kind==='wall'){
-  g.fillStyle='#dedbd2';g.fillRect(0,0,512,512);
-  for(let i=0;i<3000;i++){let v=170+Math.floor(rand()*75);g.fillStyle=`rgba(${v},${v-3},${v-9},.09)`;g.fillRect(rand()*512,rand()*512,2+rand()*14,2+rand()*10)}
-  g.strokeStyle='rgba(75,72,66,.16)';g.lineWidth=2;g.beginPath();g.moveTo(0,510);g.lineTo(512,510);g.stroke();
- }else if(kind==='cardboard'){
-  g.fillStyle='#ae8a60';g.fillRect(0,0,512,512);
-  for(let i=0;i<900;i++){g.strokeStyle=`rgba(70,42,23,${rand()*.13})`;g.beginPath();let y=rand()*512;g.moveTo(0,y);g.lineTo(512,y);g.stroke()}
-  g.fillStyle='rgba(240,214,171,.3)';g.fillRect(235,0,42,512);
-  g.strokeStyle='rgba(71,50,27,.35)';g.strokeRect(2,2,508,508);
- }
- const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t
-}
-const floorTex=proceduralTexture('floor');floorTex.repeat.set(3,2);
-const wallTex=proceduralTexture('wall');wallTex.repeat.set(2,1);
-const boxTex=proceduralTexture('cardboard');
-floor.map=floorTex;floor.color.set(0xffffff);floor.needsUpdate=true;
-wall.map=wallTex;wall.color.set(0xffffff);wall.needsUpdate=true;
-brown.map=boxTex;brown.color.set(0xffffff);brown.needsUpdate=true;
-function tube(a,b,r=.013,material=steel){
- const vec=new THREE.Vector3(...b).sub(new THREE.Vector3(...a)),mid=new THREE.Vector3(...a).addScaledVector(vec,.5);
- const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,vec.length(),7),material);
- o.position.copy(mid);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),vec.clone().normalize());
- scene.add(o);return o;
-}
-function cartonDetail(x,y,z,w,h,d,isSide){
- const front=isSide?x+.151:z+.153;
- const l=line('SPARE PARTS',isSide?front:x,y+.02,isSide?z:front,.17,.052,'#d9c7a5','#4a3727',29);
- if(isSide)l.rotation.y=Math.PI/2;
-}
-
-function cube(w,h,d,m,x,y,z,shadow=true){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);mesh.position.set(x,y,z);mesh.castShadow=shadow;mesh.receiveShadow=true;scene.add(mesh);return mesh}
-function line(t,x,y,z,w=.5,h=.16,bg='#102a3b',fg='#ffffff',font=45){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=112;let c=canvas.getContext('2d');c.fillStyle=bg;c.fillRect(0,0,512,112);c.fillStyle=fg;c.font=`bold ${font}px Arial`;c.textAlign='center';c.textBaseline='middle';c.fillText(t,256,58);const tx=new THREE.CanvasTexture(canvas);tx.colorSpace=THREE.SRGBColorSpace;const obj=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:tx,side:THREE.DoubleSide,transparent:false,depthWrite:true}));obj.position.set(x,y,z);scene.add(obj);return obj}
-function panel(w,h,d,x,y,z,m=wall){return cube(w,h,d,m,x,y,z,false)}
-// concrete-like floor with grid joints
-panel(7,.12,4,0,-.09,0,floor);for(let x=-3.5;x<=3.5;x+=.7)cube(.012,.004,4,mat(0x888782),x,.006,0,false);for(let z=-2;z<=2;z+=.7)cube(7,.004,.012,mat(0x888782),0,.007,z,false);
-panel(7,3.15,.12,0,1.57,-2.08);panel(.12,3.15,4,-3.56,1.57,0);panel(.12,3.15,4,3.56,1.57,0);panel(2.2,3.15,.1,-2.4,1.57,2.09);panel(2.2,3.15,.1,2.4,1.57,2.09);panel(7,.13,4,0,3.19,0,wall);
-for(let z of [-1.25,.2,1.25]){
- cube(.19,.09,1.13,steel,0,3.08,z,false);
- cube(.13,.012,1.05,new THREE.MeshBasicMaterial({color:0xfff8e9}),0,3.015,z,false);
- const light=new THREE.PointLight(0xfff1d9,8,4.2);light.position.set(0,2.9,z);scene.add(light);
-}
-for(let z of [-1.88,1.82])for(let x of [-3.3,3.3])cube(.035,.035,.4,steel,x,2.97,z,false);
-for(let x of [-3.48,3.48]){cube(.035,.17,3.9,mat(0x777771,.72,.45),x,.11,0,false)}
-
-// Real confirmed sample part numbers; locations tentative pending physical validation.
-const catalog=[["110078","COMPRESSOR SC18G","A4","heavy"],["140023","","G1","large"],["140025","SENSOR MOLEX","C2","tiny"],["140067","RELAY SECOP","D2","small"],["140111","SENSOR CAREL","C3","tiny"],["140513","RELAY LUNITE","D3","small"],["140514","CAPACITOR START","C1","small"],["140515","CAPACITOR RUN","D1","small"],["140532","","C4","small"],["140533","","D4","small"],["140537","","H1","large"],["140541","","G3","large"],["140543","DOOR WHEELS","C2","tiny"],["140545","LED 600MM","H3","long"],["140547","","E2","review"],["140548","","F2","review"],["140550","FAN EVAP CASTING","G4","large"],["140551","","H4","large"],["140558","","E3","review"],["140559","","F3","review"],["140561","","D2","small"],["140565","","G1","large"],["140566","","H1","large"],["140567","","E1","review"],["140568","","G3","long"],["140570","CONDENSER WOT","A1","cooling"],["140571","","F1","review"],["140574","","H3","long"],["140576","","E4","review"],["140603","COMPRESSOR SECOP","B4","heavy"],["140604","","C3","small"],["140605","","D3","small"],["140608","","C1","small"],["140609","","D1","small"],["140611","","F4","review"],["140623","","C4","small"],["150011","","D4","small"],["160002","","B1","cooling"],["160525","","G4","large"],["160527","","C2","small"],["160528","","E2","review"],["160531","","F2","review"],["160539","","H4","long"],["160540","","G1","long"],["160541","","E3","review"],["160542","","F3","review"],["170007","COMPRESSOR EMBRACO","A4","heavy"],["170009","","E1","review"],["180013","","H1","long"],["180015","","D2","tiny"],["180016","","C3","small"],["180017","","D3","small"],["180034","","C1","small"],["180035","","D1","small"],["180036","","C4","small"],["180039","COMPRESSOR HUAYI","B4","heavy"],["180058","","D4","small"],["180059","","C2","small"],["180061","","D2","small"],["180062","","G3","long"],["180064","COMPRESSOR HUAYI","A4","heavy"],["190005","","F1","review"],["1100039","COMPRESSOR 1/3HP","B4","heavy"],["1100051","COMPRESSOR 3/4HP","A4","heavy"],["1100186","","E4","review"],["1101051","","F4","review"],["130130","","H3","long"],["130138","","G4","large"],["130139","","H4","large"],["130141","","E2","review"],["130143","","F2","review"],["130145","","C3","tiny"],["130146","","E3","review"],["130150","EVAP ASSY","A3","cooling"],["130151","","G1","large"],["140001","","H1","large"],["140013","","G3","long"],["140018","","F3","review"],["140030","","E1","review"],["140037","","H3","large"],["140039","","F1","review"],["140040","","E4","review"],["140057","","G4","large"],["140058","","H4","long"],["140060","","G1","long"],["140063","EVAP I COOL 500","B3","cooling"],["140065","","D3","tiny"],["140077","","F4","review"],["140080","","E2","review"],["140081","CONDENSER IC300","A1","cooling"],["140082","EVAPORATOR IC300","B1","cooling"],["140085","","C1","tiny"],["140086","","D1","tiny"],["140088","","C4","small"],["140092","","H1","long"],["140095","","D4","small"],["140096","","G3","large"],["140097","","F2","review"],["140103","EVAP COVER","H3","large"],["140108","","G4","large"],["140109","","H4","long"],["140502","CONDENSER UNIT","A3","cooling"],["140507","","C2","tiny"],["140517","","G1","large"],["140518","","H1","large"],["140530","","D2","tiny"],["140531","","C3","tiny"],["140583","","G3","large"],["140585","","H3","large"],["140586","","D3","tiny"],["140587","","C1","tiny"],["140588","","G4","long"],["140589","","H4","large"],["140590","","G1","long"],["140593","CONDENSER I COOL","B3","cooling"],["140595","EVAPORATOR I COOL","A1","cooling"],["140597","","D1","small"],["140599","","C4","small"],["140600","","H1","long"],["140601","","G3","long"],["140602","","D4","small"],["140610","","E3","review"],["140612","CONDENSER FV1000","B1","cooling"],["140614","","F3","review"],["140619","","H3","large"],["150002","","G4","large"],["150003","","H4","large"],["150004","","G1","long"],["150005","","H1","long"],["150006","","C2","tiny"],["150007","","D2","tiny"],["150008","","C3","small"],["150009","","D3","tiny"],["150010","","E1","review"],["150013","","C1","tiny"],["150014","","D1","small"],["150015","","F1","review"],["150017","","C4","small"],["150018","TEMP SENSOR","D4","tiny"],["150020","","C2","small"],["150021","","E4","review"],["150022","","D2","tiny"],["150026","","F4","review"],["150030","","E2","review"],["150034","","C3","tiny"],["150036","","F2","review"],["150037","","E3","review"],["150041","","D3","small"],["150043","","C1","small"],["150504","EVAP","A3","cooling"],["150506","","F3","review"],["150511","","E1","review"],["150512","","F1","review"],["150513","","D1","small"],["160003","","E4","review"],["160006","EVAP TRAY","G3","large"],["160505","","H3","large"],["160506","","C4","tiny"],["160507","","G4","large"],["160508","","D4","tiny"],["160510","","F4","review"],["160513","","E2","review"],["160514","","H4","large"],["160517","","G1","large"],["160518","","H1","long"],["160519","","G3","large"],["160520","","H3","large"],["160529","","C2","tiny"],["160530","","D2","tiny"],["160533","","B3","cooling"],["160535","","F2","review"],["160536","","C3","tiny"],["160537","FAN PROTECTION","D3","small"],["160543","","C1","tiny"],["170001","","G4","large"],["170003","","E3","review"],["170004","","F3","review"],["170006","","E1","review"],["170011","","F1","review"],["170012","","D1","tiny"],["170013","","C4","tiny"],["170015","EVAP IGT","A1","cooling"],["170016","","D4","tiny"],["170017","","H4","large"],["170020","","E4","review"],["170023","COND","B1","cooling"],["170027","","F4","review"],["170028","","C2","tiny"],["170029","","D2","tiny"],["170034","","G1","large"],["170036","","E2","review"],["170039","","H1","long"],["170044","","G3","long"],["170045","","H3","long"],["170046","","G4","long"],["180003","","F2","review"],["180006","","E3","review"],["180010","","A3","cooling"],["180020","","C3","tiny"],["180022","","F3","review"],["180025","","H4","large"],["180026","","G1","large"],["180027","","B3","cooling"],["180028","","H1","large"],["180029","","G3","large"],["180030","","E1","review"],["180031","","D3","tiny"],["180032","","F1","review"],["180033","","H3","long"],["180037","","E4","review"],["180041","","C1","tiny"],["180043","","B4","cooling"],["180044","","F4","review"],["180046","","G4","large"],["180047","","H4","large"],["180048","","G1","large"],["180049","","D1","tiny"],["180050","SHELF FLAT","H1","large"],["180051","","G3","large"],["180053","","H3","long"],["180055","","G4","long"],["180056","","H4","long"],["180057","","G1","large"],["180068","","E2","review"],["190001","","H1","long"],["190003","","A1","cooling"],["190007","","G3","large"],["190009","","F2","review"],["130128","","A4","heavy"],["130131","","C4","small"],["130134","","D4","small"],["130135","","B4","heavy"],["160503","","C2","small"],["160544","","D2","small"],["170008","","C3","small"],["180018","","B1","cooling"],["180038","","D3","small"],["160538","","C1","tiny"],["180060","","D1","tiny"],["180065","","C4","small"],["130083","","D4","small"],["130118","","C2","tiny"],["140016","","H3","large"],["140017","","D2","tiny"],["140042","","E3","review"],["140523","","G4","large"],["1300711","","C3","small"],["140029","","H4","long"],["140031","","F3","review"],["140045","","G1","large"],["140048","","D3","tiny"],["140049","","C1","small"],["140050","","D1","small"],["140052","","E1","review"],["140053","","H1","long"],["140112","","C4","small"],["140505","","F1","review"],["140625","","G3","long"],["410044","","E4","review"],["410060","","H3","long"],["410080","","F4","review"],["4100021","","G4","long"],["4100062","","H4","long"],["4100071","","G1","long"],["4100081","","H1","long"],["4100111","","G3","long"],["4100113","","H3","long"],["4100271","","D4","small"],["4100282","","C2","small"],["4100375","","HAZARD","hazard"]];
-const byShelf={};for(const p of catalog){if(p[2]!=="HAZARD")(byShelf[p[2]]??=[]).push(p)}const interact=[];
-const wallColors={left:'#b6335b',front:'#1973bd',right:'#198a68'};
-function shelf(letter,cx,cz,orient,section){ // front of racks toward center
- const ww=section==='front'?1.42:1.35,hh=2.62,dd=.48,dx=(orient==='left'||orient==='right')?dd:ww,dz=(orient==='left'||orient==='right')?ww:dd;
- let baseX=cx,baseZ=cz;const isSide=orient!=='front';const width=ww;
- function loc(u,depth=0){ // u along shelves horizontal
- return isSide?[cx+depth,cz+u]:[cx+u,cz+depth] }
- for(const u of [-width/2,width/2])for(let d of [-dd/2,dd/2]){
- const [x,z]=loc(u,d);cube(.052,hh,.052,gray,x,hh/2,z);
- for(let y=.12;y<hh;y+=.14)cube(.055,.013,.055,mat(0x222b2f,.5,.6),x,y,z,false);
-}
-for(let u of [-width/2,width/2]){
- const [x1,z1]=loc(u,-dd/2),[x2,z2]=loc(u,dd/2);
- tube([x1,.09,z1],[x2,2.55,z2],.009,gray);
-}
- const levels=[2.48,1.79,1.10,.39];for(const y of levels){const mesh=cube(isSide?dd:ww,.042,isSide?ww:dd,steel,cx,y,cz);mesh.castShadow=true;
-const [ex,ez]=loc(0,orient==='front'?.235:(orient==='left'?.235:-.235));
-cube(isSide?.023:ww,.042,isSide?ww:.023,gray,ex,y-.037,ez,false)}
- const [lx,lz]=loc(0,orient==='front'?.254:(orient==='left'?.254:-.254));const sign=line(letter,lx,2.79,lz,.39,.28,'#b41525','#fff',80);if(isSide)sign.rotation.y=orient==='left'?Math.PI/2:-Math.PI/2;
- const edge=section==='left'?'#ac2352':section==='front'?'#1c5d9c':'#13754e';
- for(let i=0;i<4;i++){const lev=1+i,yl=[2.10,1.41,.72,.18][i],parts=byShelf[letter+lev]||[];
- const groups=[[],[],[],[]];parts.forEach((p,k)=>groups[k%4].push(p));
- for(let k=0;k<4;k++){
-  const group=groups[k];if(!group.length)continue;
-  const u=(k-1.5)*.305,[x,z]=loc(u,0);
-  const typ=group.every(p=>p[3]==='small'||p[3]==='tiny')?'small':(group.some(p=>p[3]==='heavy')?'heavy':(group.some(p=>p[3]==='large'||p[3]==='long'||p[3]==='cooling')?'large':'carton'));
-  const material=typ==='small'?blue:typ==='heavy'?dark:typ==='large'?steel:brown;
-  const o=cube(isSide?.26:.28,typ==='heavy'?.29:.23,isSide?.31:.29,material,x,yl+.035,z);
-  if(typ==='small'){
-    const lip=cube(isSide?.268:.288,.025,isSide?.33:.31,mat(0x0b79c5,.3,.08),x,yl+.15,z,false);
-    const rim=cube(isSide?.028:.28,.04,isSide?.31:.028,mat(0x07518d,.34,.05),x+(isSide?.135:0),yl+.115,z+(isSide?0:.145),false);
-  }
-  if(typ==='heavy'){
-    const motor=new THREE.Mesh(new THREE.CylinderGeometry(.10,.12,.26,12),dark);
-    motor.position.set(x,yl+.08,z);scene.add(motor);
-    const cap=new THREE.Mesh(new THREE.CylinderGeometry(.07,.075,.04,12),steel);
-    cap.position.set(x,yl+.23,z);scene.add(cap);
-  }
-  if(typ==='carton'){cartonDetail(x,yl+.035,z,.28,.23,.29,isSide)}
-  if(typ==='large'){
-    for(let j=0;j<4;j++)cube(isSide?.025:.22,.018,isSide?.22:.025,gray,x,yl-.07+j*.075,z,false);
-  }
-  o.userData={letter,lev,group,kind:'group',location:letter+lev};interact.push(o);
-  let [tx,tz]=loc(u,orient==='front'?.249:(orient==='left'?.249:-.249));
-  let label=line(group.length===1?group[0][0]:group[0][0]+' +'+(group.length-1),tx,yl-.055,tz,.285,.105,'#f6f6f3','#141c26',group.length===1?37:31);
-  if(isSide)label.rotation.y=orient==='left'?Math.PI/2:-Math.PI/2;
- }
- let [tx,tz]=loc(-.48,orient==='front'?.251:(orient==='left'?.251:-.251));const levelTag=line(letter+lev,tx,[2.43,1.74,1.05,.34][i],tz,.22,.12,edge,'#fff',52);if(isSide)levelTag.rotation.y=orient==='left'?Math.PI/2:-Math.PI/2;
-
- }
-}
-// Left wall A and B from entrance to back, front wall C D E F, right wall G H back to entrance
-shelf('A',-3.19,.94,'left','left');shelf('B',-3.19,-.62,'left','left');
-for(let i=0;i<4;i++)shelf('CDEF'[i],-2.21+i*1.46,-1.68,'front','front');
-shelf('G',3.19,-.64,'right','right');shelf('H',3.19,.89,'right','right');
-// Two fountain cabinets near entrance right: currently not part of cooler numbering
-for(let x of [1.90,2.74]){cube(.76,2.35,.39,steel,x,1.18,1.74);for(let j=0;j<4;j++)cube(.64,.08,.42,blue,x,.35+j*.55,1.45)}line('FOUNTAIN • TEMP',2.32,2.64,1.47,1.38,.23,'#a01b23','#fff',30);
-// center aisle, entrance
-cube(.95,.018,.35,mat(0x3d3f3e),0,.013,1.86,false);
-function look(){camera.rotation.order='YXZ';camera.rotation.y=yaw;camera.rotation.x=pitch;}
-look();let dragging=false,px=0,py=0,moved=false;
-renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;px=e.clientX;py=e.clientY;moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
-renderer.domElement.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-px,dy=e.clientY-py;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;yaw-=dx*.0053;pitch=Math.max(-.72,Math.min(.72,pitch-dy*.003));look();px=e.clientX;py=e.clientY});
-renderer.domElement.addEventListener('pointerup',e=>{dragging=false;if(moved)return;const xy=new THREE.Vector2(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(xy,camera);const hits=ray.intersectObjects(interact,false);if(hits.length){let p=hits[0].object.userData;if(p.group)showShelf(p.location,p.group);else if(p.num)info(p);else showShelf(p.letter+p.lev)}});
-const hold={forward:false,back:false,left:false,right:false};document.querySelectorAll('[data-move]').forEach(b=>{let m=b.dataset.move;for(let ev of ['pointerdown'])b.addEventListener(ev,e=>{e.preventDefault();hold[m]=true;b.setPointerCapture(e.pointerId)});for(let ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,e=>{hold[m]=false})});
-const status=document.getElementById('status');function updateStatus(){const v=((yaw%(Math.PI*2))+Math.PI*2)%(Math.PI*2);const dir=Math.sin(yaw);status.textContent=Math.abs(dir)>.55?(dir>0?'تواجه اليسار A–B':'تواجه اليمين G–H'):(Math.cos(yaw)>0?'تواجه الجدار الأمامي C–F':'تواجه المدخل')}
-function moveTo(x,z,yy=0){camera.position.set(x,1.62,z);yaw=yy;pitch=0;look();updateStatus()}
-document.getElementById('entranceBtn').onclick=()=>moveTo(0,1.64,0);document.getElementById('leftBtn').onclick=()=>moveTo(-1.25,.65,Math.PI/2);document.getElementById('frontBtn').onclick=()=>moveTo(0,.60,0);document.getElementById('rightBtn').onclick=()=>moveTo(1.28,.45,-Math.PI/2);
-const detailPanel=document.getElementById('panel');document.getElementById('close').onclick=()=>detailPanel.classList.remove('show');
-const verified=JSON.parse(localStorage.getItem('warehouse_confirmed_v2')||'{}');
-const overrides=JSON.parse(localStorage.getItem('warehouse_location_overrides_v3')||'{}');
-function actualSlot(p){return overrides[p[0]]||p[2]}
-function saveSlot(p,newSlot){
-  const slot=newSlot.trim().toUpperCase();
-  if(!/^[A-H][1-4]$/.test(slot)){alert('الموقع لازم يكون مثل A4 أو C2');return false}
-  overrides[p[0]]=slot;
-  localStorage.setItem('warehouse_location_overrides_v3',JSON.stringify(overrides));
-  return true;
-}
-function downloadLocations(){
-  const quote=v=>'"'+String(v??'').replaceAll('"','""')+'"';
-  const records=[['Spare Part Number','Part Name','Proposed / Edited Shelf','Storage Type','Arranged']];
-  catalog.forEach(p=>records.push([p[0],p[1],actualSlot(p),p[3],verified[p[0]]?'YES':'NO']));
-  const content='\uFEFF'+records.map(r=>r.map(quote).join(',')).join('\r\n');
-  const url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'}));
-  const a=document.createElement('a');a.href=url;a.download='cooler_warehouse_updated_locations.csv';a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),2000);
-}
-document.getElementById('exportBtn').onclick=downloadLocations;
-document.getElementById('photosBtn').onclick=()=>document.getElementById('photos').classList.add('show');
-document.getElementById('photosClose').onclick=()=>document.getElementById('photos').classList.remove('show');
-
-function save(){localStorage.setItem('warehouse_confirmed_v2',JSON.stringify(verified));}
-function gotoShelf(slot){let L=slot[0];if('AB'.includes(L))moveTo(-1.28,L==='A'?.95:-.65,Math.PI/2);else if('GH'.includes(L))moveTo(1.28,L==='G'?-.65:.95,-Math.PI/2);else moveTo(-2.18+'CDEF'.indexOf(L)*1.45,.52,0);}
-function showShelf(slot,subset){const ps=subset||byShelf[slot]||[];document.getElementById('panelTitle').textContent='الرف '+slot+' — '+ps.length+' أصناف';document.getElementById('panelText').textContent='اضغط على رقم القطعة لعرض موقعها وحالة الترتيب. جميع المواقع مقترحة حتى تعتمدها بنفسك. تغيير الموقع يحدث البحث والتصدير، والمجسم يعرض التوزيع الأصلي حتى إعادة تحميل المشروع.';let el=document.getElementById('results');el.innerHTML='';for(const p of ps){let b=document.createElement('div');b.textContent=p[0]+' — '+(p[1]||'الاسم يحتاج مطابقة');let sm=document.createElement('small');sm.textContent=verified[p[0]]?'✓ تم ترتيبه':'مقترح • '+actualSlot(p);b.appendChild(sm);b.onclick=()=>info({num:p[0],name:p[1],location:actualSlot(p),type:p[3]});el.appendChild(b)}detailPanel.classList.add('show')}
-function info(p){p.location=overrides[p.num]||p.location;document.getElementById('panelTitle').textContent='Spare Part '+p.num;const n=document.getElementById('panelText');n.innerHTML='';const para=document.createElement('p');para.textContent=(p.name||'اسم القطعة يحتاج مطابقة')+' | الموقع المقترح: '+p.location+' | التخزين: '+({tiny:'صندوق صغير جدًا',small:'صندوق صغير',heavy:'رف سفلي',cooling:'رف مباشر',large:'كرتون أو رف',long:'رف أو حامل طويل',hazard:'خارج رفوف المستودع',review:'يحتاج معاينة'}[p.type]||'كرتون أو رف');n.appendChild(para);
-const editLabel=document.createElement('label');editLabel.textContent='غيّر موقع القطعة المقترح (A1 إلى H4):';n.appendChild(editLabel);
-const edit=document.createElement('input');edit.id='editSlot';edit.value=p.location;n.appendChild(edit);
-const editBtn=document.createElement('button');editBtn.textContent='حفظ الموقع الجديد';
-editBtn.onclick=()=>{const original=catalog.find(c=>c[0]===p.num);if(original&&saveSlot(original,edit.value)){p.location=edit.value.trim().toUpperCase();info(p)}};
-n.appendChild(editBtn);let b=document.createElement('button');b.textContent=verified[p.num]?'✓ تم ترتيب القطعة — إلغاء التأكيد':'تأكيد ترتيب القطعة في موقعها';b.onclick=()=>{verified[p.num]=!verified[p.num];save();info(p)};n.appendChild(b);let go=document.createElement('button');go.textContent='اذهب إلى الرف';go.onclick=()=>{gotoShelf(p.location);detailPanel.classList.remove('show')};if(p.location!=='HAZARD')n.appendChild(go);document.getElementById('results').innerHTML='';detailPanel.classList.add('show')}
-function searchPanel(){document.getElementById('panelTitle').textContent='بحث في '+catalog.length+' رقم قطعة';document.getElementById('panelText').innerHTML='<p>أدخل رقم Spare Part أو اسم القطعة المعروف. المواقع أولية وغير معتمدة.</p><input id="findInput" placeholder="110078" inputmode="search" />';const results=document.getElementById('results');results.innerHTML='';detailPanel.classList.add('show');const inp=document.getElementById('findInput');inp.addEventListener('input',()=>{const q=inp.value.toLowerCase().trim();results.innerHTML='';if(!q)return;for(const p of catalog.filter(p=>p[0].includes(q)||p[1].toLowerCase().includes(q)).slice(0,40)){let el=document.createElement('div');el.textContent=p[0]+' — '+(p[1]||'Spare Part');let sm=document.createElement('small');sm.textContent=(verified[p[0]]?'✓ تم ترتيبه':'مقترح')+' • '+actualSlot(p);el.appendChild(sm);el.onclick=()=>info({num:p[0],name:p[1],location:actualSlot(p),type:p[3]});results.appendChild(el)}});inp.focus()}
-document.getElementById('searchBtn').onclick=searchPanel;
-document.getElementById('help').onclick=()=>{document.getElementById('panelTitle').textContent='طريقة الاستخدام';document.getElementById('panelText').innerHTML='<p>استخدم زر الصور لمقارنة النموذج بصور المستودع الفعلية. غيّر موقع القطعة من تفاصيلها، ثم نزّل ملف المواقع لتحديث الجدول. التعديلات محفوظة في هذا المتصفح فقط. اسحب بإصبعك يمينًا ويسارًا للالتفات، وأعلى وأسفل للنظر. توجد 270 قطعة في دليل البحث، وبعض ملصقات المجسمات تمثل مجموعة أصناف داخل نفس المستوى. استخدم الأسهم للمشي. اضغط على قطعة لعرض رقمها وموقعها. اختصارات A–B وC–F وG–H تنقلك بين الجدران.</p><p>هذا تصميم تجريبي مبني على تقدير 7 × 4 أمتار وترتيب الرفوف المقترح. الصور والأبعاد الحقيقية لم تتحول إلى مسح ثلاثي الأبعاد، لذلك تفاصيل المكان تقريبية.</p><p>يتطلب اتصالًا بالإنترنت لأول فتح لتحميل مكتبة العرض ثلاثي الأبعاد.</p>';document.getElementById('results').innerHTML='';detailPanel.classList.add('show')};
-function drawMap(){const c=document.getElementById('map').getContext('2d'),w=312,h=206;c.clearRect(0,0,w,h);c.fillStyle='#152f42';c.fillRect(0,0,w,h);const X=x=>w/2+x*39,Z=z=>h/2+z*40;c.strokeStyle='#c5dee9';c.lineWidth=4;c.strokeRect(X(-3.5),Z(-2),273,160);c.fillStyle='#4a8cb7';for(let i=0;i<4;i++)c.fillRect(X(-2.65+i*1.45),Z(-1.85),49,13);c.fillStyle='#b93460';for(let z of [-.65,.9])c.fillRect(X(-3.35),Z(z-.5),12,42);c.fillStyle='#249777';for(let z of [-.65,.9])c.fillRect(X(3.05),Z(z-.5),12,42);c.fillStyle='#d15c51';c.fillRect(X(1.55),Z(1.5),80,12);c.fillStyle='#fff';c.font='bold 21px Arial';c.fillText('▲',X(camera.position.x)-8,Z(camera.position.z)+5);c.fillStyle='#9ce2ff';c.font='bold 14px Arial';c.fillText('C D E F',106,23);c.fillText('A B',3,103);c.fillText('G H',270,103)}
-let last=performance.now();function tick(now){const dt=Math.min((now-last)/1000,.05);last=now;let fb=(hold.forward?1:0)-(hold.back?1:0),lr=(hold.right?1:0)-(hold.left?1:0);if(fb||lr){let speed=1.4*dt;let xx=camera.position.x+(-Math.sin(yaw)*fb+Math.cos(yaw)*lr)*speed;let zz=camera.position.z+(-Math.cos(yaw)*fb-Math.sin(yaw)*lr)*speed;camera.position.x=Math.max(-2.74,Math.min(2.74,xx));camera.position.z=Math.max(-1.1,Math.min(1.64,zz));}updateStatus();drawMap();renderer.render(scene,camera);requestAnimationFrame(tick)}requestAnimationFrame(tick);
-window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});loading.remove();
-</script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#202b26" />
+  <meta name="description" content="استكشف مستودع قطع غيار كولر بمنظور الشخص الأول. ابحث في كتالوج 270 صنفًا ونظّم مواقعها وتحقق منها." />
+  <title>مستودع كولر ثلاثي الأبعاد — استكشف ونظّم</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <script type="module" crossorigin src="./assets/index-Iv4Jq9Ok.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-D0_bpVi9.css">
+</head>
+<body>
+  <main id="world"></main>
+  <div class="vignette" aria-hidden="true"></div>
+  <header id="header">
+    <a class="brand" href="./" aria-label="الصفحة الرئيسية لمستودع كولر"><span class="brand-icon" aria-hidden="true">C<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M3.34 7l17.32 10M3.34 17 20.66 7M9 4l3 3 3-3M9 20l3-3 3 3"/></svg></span></span><span><strong>كولر<span class="brand-sub">مستودع ثلاثي الأبعاد</span></strong></span></a>
+    <div class="header-middle"><i class="live-dot"></i> مخطط تخزين تفاعلي <span class="divider">/</span> <span id="header-count">270 صنفًا</span></div>
+    <nav aria-label="أدوات المستودع"><button id="inventory-btn" class="button primary"><span aria-hidden="true">⌕</span> المخزون <kbd>/</kbd></button><button id="data-btn" class="button icon" aria-label="الاستيراد والتصدير والنسخ الاحتياطية" title="أدوات البيانات">⇅</button><button id="settings-btn" class="button icon" aria-label="الإعدادات" title="الإعدادات"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-1 3-3 1-2 3 2 2-1 4 3 2 3-1 3 3 3-2v-3l3-2-1-4-3-1-1-3z"/><circle cx="11" cy="11" r="3"/></svg></button><button id="help-btn" class="button icon" aria-label="المساعدة وحدود دقة المخطط" title="المساعدة">?</button></nav>
+  </header>
+  <section class="scene-title" aria-label="وصف المخطط"><div class="eyebrow"><span>01</span> / استكشاف بمنظور الشخص الأول</div><h1>مستودع كولر<span class="title-dot">.</span></h1><p>ممر واضح، ومكان لكل قطعة.</p><span class="plan-tag">توزيع مقترح <span>نحو 7 × 4 م</span></span></section>
+  <div id="save-state" role="status"><span class="status-dot"></span><span id="save-text">المخزون المحلي · جاهز</span></div>
+  <div id="reticle" aria-hidden="true"><span></span></div>
+  <button id="interact" class="interact hidden"><span class="key">E</span><span><strong id="interact-title">الرف C1</strong><small id="interact-sub">فحص الرف</small></span><span class="arrow">↗</span></button>
+  <aside id="map-card" aria-label="نظرة عامة على المستودع"><div class="map-heading"><span>خريطة المستودع</span><button id="map-toggle" aria-label="طي خريطة المستودع">−</button></div><canvas id="minimap" width="440" height="272" aria-label="خريطة عامة. استخدم أزرار الرفوف لاختيار رف."></canvas><div class="map-shelves" aria-label="اختيار رف"><button data-rack="A">A</button><button data-rack="B">B</button><button data-rack="C">C</button><button data-rack="D">D</button><button data-rack="E">E</button><button data-rack="F">F</button><button data-rack="G">G</button><button data-rack="H">H</button></div><div class="map-footer"><span><i></i> أنت هنا</span><span id="map-target">المدخل</span></div></aside>
+  <div id="desktop-help"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> المشي</span><i></i><span>اسحب للالتفات</span><i></i><span><kbd>SHIFT</kbd> الركض</span></div>
+  <div class="scene-tools"><button id="stock-btn" class="button" aria-pressed="true"><span class="stock-dot"></span> نماذج المخزون</button><button id="reset-btn" class="button" title="العودة إلى المدخل"><span aria-hidden="true">↶</span> المدخل</button><span id="performance">عالية · WebGL</span></div>
+  <div id="touch-controls"><div id="joystick" role="group" aria-label="اسحب عصا التحكم للمشي"><div class="stick-cross"></div><span></span></div><span class="touch-look">اسحب للالتفات <span>← →</span></span></div>
+  <div id="tour-banner" class="hidden" role="status">جارٍ الانتقال إلى الرف <strong id="tour-target"></strong><button id="cancel-tour">إلغاء</button></div>
+  <div id="toast" class="hidden" role="status"></div>
+  <aside id="panel" class="hidden" aria-label="المخزون وأدوات المستودع"><div class="panel-top"><div class="eyebrow" id="panel-eyebrow">المستودع / المخزون</div><button id="close-panel" class="button icon" aria-label="إغلاق اللوحة">×</button></div><div id="panel-content"></div></aside>
+  <div id="loading"><div class="load-logo">C<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M3.34 7l17.32 10M3.34 17 20.66 7M9 4l3 3 3-3M9 20l3-3 3 3"/></svg></span></div><div class="eyebrow">كولر / مستودع ثلاثي الأبعاد</div><h2>جارٍ فتح المستودع</h2><p id="loading-message">جارٍ تجهيز الكتالوج وخامات المستودع…</p><div class="load-bar"><span></span></div></div>
+  <noscript><div class="fatal">فعّل JavaScript لاستكشاف المستودع وإدارة المخزون.</div></noscript>
+</body>
+</html>
